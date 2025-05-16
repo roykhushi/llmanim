@@ -9,11 +9,48 @@ VIDEO_OUTPUT_DIR = "videos/outputs"
 os.makedirs(TEMP_SCRIPT_DIR, exist_ok=True)
 os.makedirs(VIDEO_OUTPUT_DIR, exist_ok=True)
 
-def extract_class_name(code: str) -> str:
-    match = re.search(r"class\s+(\w+)\(Scene\):", code)
-    if not match:
-        raise ValueError("Could not extract class name from code.")
-    return match.group(1)
+# def extract_class_name(code: str) -> str:
+#     match = re.search(r"class\s+(\w+)\(Scene\):", code)
+#     if not match:
+#         raise ValueError("Could not extract class name from code.")
+#     return match.group(1)
+
+
+def extract_class_name(code):
+    """
+    Extract the Manim scene class name from the code.
+    Returns the first class that inherits from Scene or any scene type.
+    """
+    # Look for class definitions that inherit from Scene or other scene types
+    scene_patterns = [
+        r'class\s+(\w+)\s*\(\s*Scene\s*\)',  # class MyScene(Scene)
+        r'class\s+(\w+)\s*\(\s*MovingCameraScene\s*\)',  # class MyScene(MovingCameraScene)
+        r'class\s+(\w+)\s*\(\s*ThreeDScene\s*\)',  # class MyScene(ThreeDScene)
+        r'class\s+(\w+)\s*\(\s*GraphScene\s*\)',  # class MyScene(GraphScene)
+        r'class\s+(\w+)\s*\(\s*VectorScene\s*\)',  # class MyScene(VectorScene)
+        r'class\s+(\w+)\s*\(\s*ZoomedScene\s*\)'  # class MyScene(ZoomedScene)
+    ]
+    
+    # Try each pattern
+    for pattern in scene_patterns:
+        matches = re.findall(pattern, code)
+        if matches:
+            return matches[0]
+    
+    # If no specific pattern matches, try a more general approach
+    # Look for any class that might inherit from something that ends with 'Scene'
+    general_pattern = r'class\s+(\w+)\s*\(\s*\w*Scene\w*\s*\)'
+    matches = re.findall(general_pattern, code)
+    if matches:
+        return matches[0]
+    
+    # If still no matches, check for any class definition as a fallback
+    any_class = re.findall(r'class\s+(\w+)', code)
+    if any_class:
+        return any_class[0]
+        
+    raise ValueError("Could not extract class name from code.")
+
 
 def save_code_to_file(code: str) -> tuple[str, str]:
     file_id = str(uuid.uuid4())
