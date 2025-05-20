@@ -51,23 +51,31 @@ def extract_class_name(code):
         
     raise ValueError("Could not extract class name from code.")
 
-
+FILE_COUNTER = 0
 def save_code_to_file(code: str) -> tuple[str, str]:
-    file_id = str(uuid.uuid4())
-    script_path = os.path.join(TEMP_SCRIPT_DIR, f"{file_id}.py")
+    global FILE_COUNTER
+    
+    script_path = os.path.join(TEMP_SCRIPT_DIR, f"{FILE_COUNTER}.py")
+    file_id = f"video_{FILE_COUNTER}"
+    
+    os.makedirs(TEMP_SCRIPT_DIR, exist_ok=True)
+
 
     with open(script_path, "w") as f:
         f.write(code)
-
+    
+    FILE_COUNTER += 1
     return script_path, file_id
 
 def render_manim_video(script_path: str, class_name: str, file_id: str) -> str:
-    output_path = os.path.join(VIDEO_OUTPUT_DIR, f"{file_id}.mp4")
+    
+    output_path = os.path.join(VIDEO_OUTPUT_DIR, f"Animation.mp4")
 
     command = [
         "manim", "-pql", script_path, class_name,
-        "-o", f"{file_id}.mp4",
-        "--media_dir", VIDEO_OUTPUT_DIR
+        "-o", f"Animation.mp4",
+        "--media_dir", VIDEO_OUTPUT_DIR,
+        "--verbosity", "DEBUG"  
     ]
 
     result = subprocess.run(command, capture_output=True, text=True)
@@ -76,3 +84,5 @@ def render_manim_video(script_path: str, class_name: str, file_id: str) -> str:
         raise Exception(f"Manim rendering failed:\n{result.stderr}")
 
     return output_path
+
+

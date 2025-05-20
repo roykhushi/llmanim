@@ -1,14 +1,27 @@
+import cloudinary.uploader
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import re
 
 from app.models.schema import PromptRequest
 from app.services.gemini import get_manim_code_from_prompt
 from app.services.manim import extract_class_name, save_code_to_file, render_manim_video
 
+import time
+import cloudinary
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET")
+)
+
+
 router = APIRouter()
-
-
 
 def clean_code(code):
     """
@@ -74,9 +87,23 @@ async def generate_video(request: PromptRequest):
         code = clean_code(raw_code)
         class_name = extract_class_name(code)
         script_path, file_id = save_code_to_file(code)
-        video_path = render_manim_video(script_path, class_name, file_id)
+        video_path = render_manim_video(script_path, class_name,file_id)
         
-        return FileResponse(path=video_path, media_type="video/mp4", filename=f"{file_id}.mp4")
+        documentUrl = ""
+        file = f"videos/outputs/videos/0/480p15/Animation.mp4"
+        if file:
+            object_key = str(time.time()) + "/"+ file
+            upload_result = cloudinary.uploader.upload(file,public_id=object_key, resource_type = "video")
+                
+            documentUrl = upload_result["secure_url"]
+        
+        print(documentUrl)
+        
+        return JSONResponse({"video_url":documentUrl})
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
