@@ -21,6 +21,8 @@ cloudinary.config(
 )
 
 
+
+
 router = APIRouter()
 
 def clean_code(code):
@@ -28,12 +30,10 @@ def clean_code(code):
     Clean the code to remove non-Python elements while preserving
     important structures like class definitions.
     """
-    # First, try to extract code from code blocks if they exist
     code_block_pattern = r'```(?:python)?\s*(.*?)\s*```'
     code_blocks = re.findall(code_block_pattern, code, re.DOTALL)
     
     if code_blocks:
-        # Use the largest code block (likely the main script)
         cleaned_code = max(code_blocks, key=len)
     else:
         # If no code blocks, clean line by line
@@ -69,8 +69,6 @@ def clean_code(code):
     return cleaned_code
 
 
-
-
 @router.post("/generate")
 async def generate_video(request: PromptRequest):
     try:
@@ -83,6 +81,7 @@ async def generate_video(request: PromptRequest):
             "Do not include explanations, markdown formatting, or installation instructions. "
             "The output should be directly executable as a Python file."
         )
+        
         raw_code = get_manim_code_from_prompt(enhanced_prompt)
         code = clean_code(raw_code)
         class_name = extract_class_name(code)
