@@ -20,9 +20,6 @@ cloudinary.config(
     api_secret=os.environ.get("CLOUDINARY_API_SECRET")
 )
 
-
-
-
 router = APIRouter()
 
 def clean_code(code):
@@ -69,6 +66,8 @@ def clean_code(code):
     return cleaned_code
 
 
+
+
 @router.post("/generate")
 async def generate_video(request: PromptRequest):
     try:
@@ -81,7 +80,6 @@ async def generate_video(request: PromptRequest):
             "Do not include explanations, markdown formatting, or installation instructions. "
             "The output should be directly executable as a Python file."
         )
-        
         raw_code = get_manim_code_from_prompt(enhanced_prompt)
         code = clean_code(raw_code)
         class_name = extract_class_name(code)
