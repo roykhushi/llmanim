@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
-import { MessageType } from "@/components/ChatMessage";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -22,7 +21,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
 
   return (
     <motion.div
-      className="border-t border-border bg-background/80 backdrop-blur-sm py-4 sticky bottom-0 w-full"
+      className="flex justify-center items-center border-t border-border bg-background/80 backdrop-blur-sm py-4 sticky bottom-0 w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -40,7 +39,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
             Send
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-xs text-muted-foreground mt-2 text-center">
           Try describing math concepts, equations, or visual representations you'd like to see animated.
         </p>
       </form>

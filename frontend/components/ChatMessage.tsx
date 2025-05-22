@@ -29,12 +29,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
           {isUser ? (
             <>
               <AvatarFallback>U</AvatarFallback>
-              <AvatarImage src="/placeholder.svg" />
+              <AvatarImage src="/avatar.svg" />
             </>
           ) : (
             <>
               <AvatarFallback>AI</AvatarFallback>
-              <AvatarImage src="/placeholder.svg" />
+              <AvatarImage src="/robot.svg" />
             </>
           )}
         </Avatar>
@@ -53,23 +53,28 @@ export function ChatMessage({ message }: ChatMessageProps) {
           </div>
           
           {message.animation && (
-            <div className="mt-2 rounded-lg overflow-hidden border border-border">
-              <img
-                src={message.animation}
-                alt="Generated animation"
-                className="w-full max-w-sm h-auto"
-              />
-              <div className="p-2 flex justify-end bg-card">
-                <a
-                  href={message.animation}
-                  download
-                  className="text-xs text-primary hover:underline"
-                >
-                  Download Animation
-                </a>
-              </div>
-            </div>
-          )}
+  <div className="mt-2 rounded-lg overflow-hidden border border-border">
+    <video
+      src={message.animation}
+      controls
+      autoPlay
+      className="w-full max-w-sm h-auto"
+      playsInline
+    >
+      <source src={message.animation} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div className="p-2 flex justify-end bg-card">
+      <a
+        href={message.animation}
+        download
+        className="text-xs text-primary hover:underline"
+      >
+        Download Animation
+      </a>
+    </div>
+  </div>
+)}
           
           <span className="text-xs text-muted-foreground mt-1">
             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
