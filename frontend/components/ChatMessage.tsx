@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
 
 export type MessageType = {
   id: string;
