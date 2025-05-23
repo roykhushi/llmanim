@@ -52,7 +52,7 @@ export default function LandingPage() {
           <span className="font-bold text-xl">ManimAI</span>
         </motion.div>
 
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
             {mounted && (
               <Button
@@ -71,7 +71,7 @@ export default function LandingPage() {
               <Link href="/chat">Try Now</Link>
             </Button>
           </motion.div>
-        </div>
+        </div> */}
       </header>
 
       {/* Hero Section */}
@@ -87,9 +87,9 @@ export default function LandingPage() {
           transition={{ duration: 0.7, type: "spring" }}
           className="mb-8"
         >
-          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+          {/* <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
             <Play className="h-10 w-10 text-white" />
-          </div>
+          </div> */}
         </motion.div>
 
         <motion.h1

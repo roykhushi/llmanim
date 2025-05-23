@@ -62,11 +62,11 @@ const Chat = () => {
 
     
 
-    <div className="min-h-screen">
+    <div className="min-h-screen mt-10 pt-10">
       <main className="flex items-center justify-center pb-4">
         <div className="container max-w-4xl px-4 py-8">
           <div className="mb-10">
-            <h1 className="text-4xl font-bold mb-2 text-center">AI Animation Chat</h1>
+            <h1 className="text-4xl font-bold mb-2 text-center">ManimAI <span className="text-purple-600">Chat</span></h1>
             <p className="text-muted-foreground text-center">
               Describe the mathematical concept you want to animate, and our AI will create a visualization for you.
             </p>
@@ -83,7 +83,7 @@ const Chat = () => {
       </div>
 
       <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
-      <Footer />
+      
     </div>
   );
 };

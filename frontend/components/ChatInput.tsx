@@ -35,7 +35,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
             className="min-h-[60px] resize-none"
             disabled={disabled}
           />
-          <Button type="submit" disabled={disabled || !input.trim()}>
+          <Button type="submit" className="bg-purple-400 hover:bg-purple-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black" disabled={disabled || !input.trim()}>
             Send
           </Button>
         </div>

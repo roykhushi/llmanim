@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { useTheme } from "next-themes"
-import { ArrowRight, Moon, Sun, Code, Sparkles, Play, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Navbar } from "@/components/Navbar"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import { ArrowRight, Moon, Sun, Code, Sparkles, Play, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Navbar } from "@/components/Navbar";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
+import { LineShadowText } from "@/components/magicui/line-shadow-text";
+import { AuroraText } from "@/components/magicui/aurora-text";
+import { TextAnimate } from "@/components/magicui/text-animate";
+import { Cover } from "@/components/ui/cover";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 // Animation variants defined at the top level
 const fadeIn = {
@@ -16,7 +22,7 @@ const fadeIn = {
     y: 0,
     transition: { duration: 0.6 },
   },
-}
+};
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -26,15 +32,15 @@ const staggerContainer = {
       staggerChildren: 0.2,
     },
   },
-}
+};
 
 export default function LandingPage() {
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,7 +87,7 @@ export default function LandingPage() {
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="container mx-auto px-4 py-20 flex flex-col items-center text-center"
+        className="container mx-auto px-4 py-20 flex flex-col items-center text-center mt-10"
       >
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -89,9 +95,9 @@ export default function LandingPage() {
           transition={{ duration: 0.7, type: "spring" }}
           className="mb-8"
         >
-          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+          {/* <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
             <Play className="h-10 w-10 text-white" />
-          </div>
+          </div> */}
         </motion.div>
 
         <motion.h1
@@ -105,7 +111,9 @@ export default function LandingPage() {
             },
           }}
         >
-          Create Mathematical Animations with AI
+          <AuroraText>Create Mathematical Animations with AI</AuroraText>
+          <br />
+          within <Cover className="italic">seconds </Cover>
         </motion.h1>
 
         <motion.p
@@ -119,7 +127,8 @@ export default function LandingPage() {
             },
           }}
         >
-          Transform your ideas into beautiful Manim animations using the power of AI. No coding required.
+          Transform your ideas into beautiful Manim animations using the power
+          of AI. No coding required.
         </motion.p>
 
         <motion.div
@@ -133,13 +142,10 @@ export default function LandingPage() {
             },
           }}
         >
-          <Button size="lg" asChild>
+          <Button size="lg" asChild className="bg-purple-400 hover:bg-purple-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
             <Link href="/chat">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-          </Button>
-          <Button size="lg" variant="outline">
-            Watch Demo
           </Button>
         </motion.div>
       </motion.section>
@@ -155,8 +161,12 @@ export default function LandingPage() {
           <MathAnimation />
         </div>
         <div className="container mx-auto px-4 relative z-10">
-          <div className="aspect-video rounded-xl overflow-hidden border shadow-lg">
-            <video className="w-full h-full object-cover" poster="/placeholder.svg?height=720&width=1280" controls>
+          <div className="aspect-video rounded-xl overflow-hidden border dark:shadow-zinc-500 shadow-lg">
+            <video
+              className="w-full h-full object-cover"
+              poster="/placeholder.svg?height=720&width=1280"
+              controls
+            >
               <source src="#" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -172,8 +182,17 @@ export default function LandingPage() {
         variants={staggerContainer}
         className="container mx-auto px-4 py-20"
       >
-        <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-16 text-center">
-          Create Stunning Math Animations with AI
+        <motion.h2
+          variants={fadeIn}
+          className="text-4xl md:text-5xl font-bold mb-16 text-center"
+        >
+          Create Stunning Animations with{" "}
+          <LineShadowText
+            shadowColor="gray"
+            className="italic text-purple-600 text-4xl md:text-7xl"
+          >
+            AI
+          </LineShadowText>
         </motion.h2>
 
         <div className="grid md:grid-cols-3 gap-10">
@@ -203,8 +222,13 @@ export default function LandingPage() {
         variants={staggerContainer}
         className="container mx-auto px-4 py-20 bg-muted/30 rounded-3xl my-10"
       >
-        <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-16 text-center">
-          How It Works
+        <motion.h2
+          variants={fadeIn}
+          className="text-4xl md:text-5xl font-bold mb-16 text-center"
+        >
+          <TextAnimate animation="blurInUp" by="character">
+            How It Works
+          </TextAnimate>
         </motion.h2>
 
         <div className="grid md:grid-cols-3 gap-10">
@@ -243,9 +267,11 @@ export default function LandingPage() {
               transition: { duration: 0.7 },
             },
           }}
-          className="text-3xl md:text-4xl font-bold mb-6"
+          className="text-4xl md:text-5xl font-bold mb-6"
         >
-          Ready to Create Beautiful Math Animations?
+          <TextAnimate animation="blurInUp" by="character">
+            Ready to Create Beautiful Math Animations?
+          </TextAnimate>
         </motion.h2>
 
         <motion.p
@@ -259,8 +285,8 @@ export default function LandingPage() {
           }}
           className="text-xl mb-10 max-w-2xl mx-auto text-muted-foreground"
         >
-          Join thousands of educators, students, and math enthusiasts who are creating stunning visualizations with
-          ManimAI.
+          Join thousands of educators, students, and math enthusiasts who are
+          creating stunning visualizations with ManimAI.
         </motion.p>
 
         <motion.div
@@ -273,7 +299,11 @@ export default function LandingPage() {
             },
           }}
         >
-          <Button size="lg" asChild>
+          <Button
+            size="lg"
+            asChild
+            className="bg-purple-400 hover:bg-purple-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black"
+          >
             <Link href="/chat">
               Start Creating Now <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -298,35 +328,41 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 // Feature Card Component
-function FeatureCard({ icon, title, description }:any) {
+function FeatureCard({ icon, title, description }: any) {
   return (
-    <motion.div variants={fadeIn} className="p-6 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow">
+    <motion.div
+      variants={fadeIn}
+      className="p-6 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow"
+    >
       <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 text-primary">
         {icon}
       </div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
       <p className="text-muted-foreground">{description}</p>
     </motion.div>
-  )
+  );
 }
 
 // Step Card Component
-function StepCard({ number, title, description }:any) {
+function StepCard({ number, title, description }: any) {
   return (
-    <motion.div variants={fadeIn} className="p-6 rounded-xl bg-background shadow-sm relative">
-      <div className="absolute -top-6 left-6 h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
+    <motion.div
+      variants={fadeIn}
+      className="p-6 rounded-xl bg-background shadow-sm relative"
+    >
+      <div className="absolute -top-6 left-6 h-12 w-12 rounded-full flex items-center justify-center text-white dark:text-black font-bold text-xl bg-purple-400">
         {number}
       </div>
-      <div className="mt-6">
+      <div className="mt-6 ">
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-muted-foreground">{description}</p>
       </div>
     </motion.div>
-  )
+  );
 }
 
 // Math Animation Component
@@ -342,7 +378,12 @@ function MathAnimation() {
         animate={{
           pathLength: 1,
           opacity: 0.5,
-          transition: { duration: 2, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" },
+          transition: {
+            duration: 2,
+            ease: "easeInOut",
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          },
         }}
       />
       <motion.circle
@@ -390,5 +431,5 @@ function MathAnimation() {
         }}
       />
     </svg>
-  )
+  );
 }
