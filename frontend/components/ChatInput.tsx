@@ -40,7 +40,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mt-2 text-center">
-          Try describing math concepts, equations, or visual representations you'd like to see animated.
+          Try describing math concepts and equations that  you'd like to see animated.
         </p>
       </form>
     </motion.div>
