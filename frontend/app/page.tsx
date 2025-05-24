@@ -3,18 +3,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { ArrowRight, Moon, Sun, Code, Sparkles, Play, Zap } from "lucide-react";
+import { ArrowRight, Code, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
-import { SmoothCursor } from "@/components/ui/smooth-cursor";
 import { LineShadowText } from "@/components/magicui/line-shadow-text";
 import { AuroraText } from "@/components/magicui/aurora-text";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import { Cover } from "@/components/ui/cover";
-import { BorderBeam } from "@/components/magicui/border-beam";
 
-// Animation variants defined at the top level
+
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -35,54 +33,14 @@ const staggerContainer = {
 };
 
 export default function LandingPage() {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      {/* <header className="container mx-auto py-6 px-4 flex justify-between items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center gap-2"
-        >
-          <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
-          <span className="font-bold text-xl">ManimAI</span>
-        </motion.div>
-
-        <div className="flex items-center gap-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-            {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-            )}
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <Button asChild>
-              <Link href="/chat">Try Now</Link>
-            </Button>
-          </motion.div>
-        </div>
-      </header> */}
+    
 
       <Navbar />
 
-      {/* Hero Section */}
       <motion.section
         initial="hidden"
         animate="visible"
@@ -95,9 +53,6 @@ export default function LandingPage() {
           transition={{ duration: 0.7, type: "spring" }}
           className="mb-8"
         >
-          {/* <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
-            <Play className="h-10 w-10 text-white" />
-          </div> */}
         </motion.div>
 
         <motion.h1
@@ -150,7 +105,6 @@ export default function LandingPage() {
         </motion.div>
       </motion.section>
 
-      {/* Animated Math Visualization */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -173,8 +127,6 @@ export default function LandingPage() {
           </div>
         </div>
       </motion.div>
-
-      {/* Features Section */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -213,13 +165,12 @@ export default function LandingPage() {
           />
         </div>
       </motion.section>
-
-      {/* How It Works */}
       <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
+        id="about"
         className="container mx-auto px-4 py-20 bg-muted/30 rounded-3xl my-10"
       >
         <motion.h2
@@ -250,7 +201,6 @@ export default function LandingPage() {
         </div>
       </motion.section>
 
-      {/* CTA Section */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -311,7 +261,6 @@ export default function LandingPage() {
         </motion.div>
       </motion.section>
 
-      {/* Footer */}
       <footer className="mt-auto border-t py-10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -331,7 +280,6 @@ export default function LandingPage() {
   );
 }
 
-// Feature Card Component
 function FeatureCard({ icon, title, description }: any) {
   return (
     <motion.div
@@ -347,7 +295,6 @@ function FeatureCard({ icon, title, description }: any) {
   );
 }
 
-// Step Card Component
 function StepCard({ number, title, description }: any) {
   return (
     <motion.div
@@ -365,7 +312,6 @@ function StepCard({ number, title, description }: any) {
   );
 }
 
-// Math Animation Component
 function MathAnimation() {
   return (
     <svg width="1000" height="400" viewBox="0 0 1000 400">

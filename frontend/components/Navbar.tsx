@@ -2,16 +2,13 @@
 
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { ArrowRight, Moon, Sun, Code, Sparkles, Play, Zap } from "lucide-react"
+import {Sparkles} from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, type FC } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const Navbar: FC = () => {
-
-    const [mounted, setMounted] = useState(false)
-    const { theme, setTheme } = useTheme()
 
   return (
     <header className="fixed backdrop-blur-lg bg-white/30 dark:bg-black/30 z-10 mx-auto py-6 px-4 flex justify-between items-center border border-gray-200 dark:border-gray-800  shadow-sm w-full">
@@ -48,10 +45,10 @@ export const Navbar: FC = () => {
             <Link href="/chat" className="text-sm font-medium hover:text-primary transition-colors">
               Chat
             </Link>
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="#about" scroll={true} className="text-sm font-medium hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="https://github.com/roykhushi/llmanim" className="text-sm font-medium hover:text-primary transition-colors">
               GitHub
             </Link>
           </motion.nav>

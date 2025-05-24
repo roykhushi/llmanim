@@ -2,9 +2,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { ChatMessage, MessageType } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
+import { Loader2 } from "lucide-react";
+
+
 
 const Chat = () => {
   const [messages, setMessages] = useState<MessageType[]>([
@@ -37,6 +39,8 @@ const Chat = () => {
         sender: "ai",
         timestamp: new Date(),
         animation: response.data.video_url, // Video URL from backend
+        // isLoading: true,
+        // isGeneratingVideo: true,
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -76,6 +80,15 @@ const Chat = () => {
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
+
+            {isLoading && (
+                <div className="flex items-center justify-center space-x-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <p className="text-sm text-muted-foreground">
+                    Generating animation...
+                  </p>
+                </div>
+              )}
           </div>
         </div>
       </main>

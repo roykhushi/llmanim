@@ -1,21 +1,19 @@
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 export type MessageType = {
   id: string;
   content: string;
   sender: "user" | "ai";
   timestamp: Date;
-  animation?: string; // URL to animation if available
+  animation?: string;
+
 };
 
 interface ChatMessageProps {
@@ -48,6 +46,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
     }
   };
 
+
+
+
   return (
     <motion.div
       className={cn(
@@ -70,7 +71,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           ) : (
             <>
               <AvatarFallback>AI</AvatarFallback>
-              <AvatarImage src="/robot.svg" />
+              <AvatarImage src="/robot-assistant.png" />
             </>
           )}
         </Avatar>
@@ -81,6 +82,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             isUser ? "items-end" : "items-start"
           )}
         >
+
           <div
             className={cn(
               "rounded-2xl px-4 py-2 text-sm",
