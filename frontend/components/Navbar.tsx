@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import {Sparkles} from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const Navbar: FC = () => {

@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import { ArrowRight, Code, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -11,6 +9,18 @@ import { LineShadowText } from "@/components/magicui/line-shadow-text";
 import { AuroraText } from "@/components/magicui/aurora-text";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import { Cover } from "@/components/ui/cover";
+
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+interface StepCardProps {
+  number: string;
+  title: string;
+  description: string;
+}
 
 
 const fadeIn = {
@@ -280,7 +290,7 @@ export default function LandingPage() {
   );
 }
 
-function FeatureCard({ icon, title, description }: any) {
+function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
     <motion.div
       variants={fadeIn}
@@ -295,7 +305,7 @@ function FeatureCard({ icon, title, description }: any) {
   );
 }
 
-function StepCard({ number, title, description }: any) {
+function StepCard({ number, title, description }: StepCardProps) {
   return (
     <motion.div
       variants={fadeIn}
