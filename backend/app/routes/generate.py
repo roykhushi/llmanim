@@ -33,33 +33,26 @@ def clean_code(code):
     if code_blocks:
         cleaned_code = max(code_blocks, key=len)
     else:
-        # If no code blocks, clean line by line
         lines = code.split('\n')
         cleaned_lines = []
         
-        # Process each line
         for line in lines:
-            # Skip markdown list items that aren't valid Python
             if re.match(r'^\d+\.\s+\*\*', line.strip()):
                 continue
                 
-            # Skip lines that are clearly markdown or instructions
             if line.strip().startswith(('# ', '## ', '### ')) and ':' in line:
                 continue
                 
-            # Remove markdown formatting but keep the content
-            line = re.sub(r'\*\*(.*?)\*\*', r'\1', line)  # Remove bold
-            line = re.sub(r'`(.*?)`', r'\1', line)        # Remove inline code
+            line = re.sub(r'\*\*(.*?)\*\*', r'\1', line)  
+            line = re.sub(r'`(.*?)`', r'\1', line)        
             
             cleaned_lines.append(line)
             
         cleaned_code = '\n'.join(cleaned_lines)
     
-    # Ensure imports for Manim are present
     if "from manim import" not in cleaned_code:
         cleaned_code = "from manim import *\n" + cleaned_code
     
-    # Ensure there's at least one simple Scene class if none was found
     if not re.search(r'class\s+\w+\s*\(\s*\w*Scene\w*\s*\)', cleaned_code):
         cleaned_code += '\n\nclass DefaultScene(Scene):\n    def construct(self):\n        self.add(Text("Default Scene"))\n'
     

@@ -128,7 +128,9 @@ export default function LandingPage() {
           <div className="aspect-video rounded-xl overflow-hidden border dark:shadow-zinc-500 shadow-lg">
             <video
               className="w-full h-full object-cover"
-              poster="/placeholder.svg?height=720&width=1280"
+              autoPlay
+              src="/llmanim-video-1748198460461.mp4"
+              poster="/poster.png?height=720&width=1280"
               controls
             >
               <source src="#" type="video/mp4" />
