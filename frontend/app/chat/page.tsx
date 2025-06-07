@@ -31,14 +31,14 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/generate", { prompt: content });
+      const response = await axios.post(`${process.env.BACKEND_URL}/api/generate`, { prompt: content });
 
       const aiMessage: MessageType = {
         id: `ai-${Date.now()}`,
         content: response.data.message,
         sender: "ai",
         timestamp: new Date(),
-        animation: response.data.video_url, // Video URL from backend
+        animation: response.data.video_url, 
         // isLoading: true,
         // isGeneratingVideo: true,
       };
