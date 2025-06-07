@@ -42,12 +42,12 @@ Thumbs.db
 # Logs
 *.log
 
-# Environment variables (keep your .env file out)
+# Environment variables 
 .env
 .env.local
 .env.production
 
-# Manim cache and output (if you're storing locally)
+# Manim cache and output 
 media/
 Manim*/
 
