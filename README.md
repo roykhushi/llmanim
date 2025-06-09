@@ -43,8 +43,8 @@ ManimAI is a web application that uses AI to generate mathematical animations us
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/manimai.git
-cd manimai
+git clone https://github.com/yourusername/llmanim.git
+cd llmanim
 ```
 
 2. Install Backend Dependencies
@@ -81,7 +81,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 1. Start the Backend Server
 ```bash
 cd backend
-uvicorn main:app --reload
+fastapi dev main.py
 ```
 
 2. Start the Frontend Development Server
@@ -113,10 +113,6 @@ manimai/
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

@@ -19,6 +19,10 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendMessage = async (content: string) => {
+    
+    const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+    console.log(`Backend url : ${backendURL}`);
+
     const userMessage: MessageType = {
       id: `user-${Date.now()}`,
       content,
