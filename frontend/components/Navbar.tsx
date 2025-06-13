@@ -24,18 +24,6 @@ export const Navbar: FC = () => {
         </motion.div>
 
         <div className="flex items-center gap-4">
-          {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-            {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
-            )}
-          </motion.div> */}
 
           <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="hidden md:flex items-center gap-10">
             <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
@@ -50,9 +38,9 @@ export const Navbar: FC = () => {
             <Link href="https://github.com/roykhushi/llmanim" className="text-sm font-medium hover:text-primary transition-colors">
               GitHub
             </Link>
-          </motion.nav>
-
+          
           <ThemeToggle />
+          </motion.nav>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
             <Button asChild className="bg-purple-400 hover:bg-purple-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
