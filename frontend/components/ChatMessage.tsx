@@ -42,7 +42,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Download failed:", error);
+      // Silently handle download error
     }
   };
 

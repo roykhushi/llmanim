@@ -1,31 +1,134 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Navbar } from "@/components/Navbar";
 import { ChatMessage, MessageType } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
-import { Loader2 } from "lucide-react";
+import { ChatSidebar } from "@/components/ChatSidebar";
+import { Loader2, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
-const Chat = () => {
-  const [messages, setMessages] = useState<MessageType[]>([
-    {
-      id: "1",
-      content:
-        "Hello! I'm your AI animation assistant. What math concept would you like me to animate today?",
-      sender: "ai",
-      timestamp: new Date(),
-    },
-  ]);
+interface ChatSession {
+  session_id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+  messages: MessageType[];
+}
+
+const ChatContent = () => {
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { open, state } = useSidebar();
+
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+
+  // Load sessions on component mount
+  useEffect(() => {
+    loadSessions();
+  }, []);
+
+  const loadSessions = async () => {
+    try {
+      const response = await axios.get(`${backendURL}/api/chat/sessions`);
+      setSessions(response.data.sessions);
+    } catch (error: any) {
+      // Silently handle error - sessions will remain empty
+    }
+  };
+
+  const createNewSession = async () => {
+    try {
+      const response = await axios.post(`${backendURL}/api/chat/sessions`, {
+        title: "New Chat"
+      });
+      
+      const newSession: ChatSession = {
+        session_id: response.data.session_id,
+        title: response.data.title,
+        created_at: response.data.created_at,
+        updated_at: response.data.created_at,
+        message_count: 0,
+        messages: []
+      };
+      
+      setSessions([newSession, ...sessions]);
+      setCurrentSession(newSession);
+      setMessages([]);
+    } catch (error) {
+      // Silently handle error
+    }
+  };
+
+  const loadSession = async (sessionId: string) => {
+    try {
+      const response = await axios.get(`${backendURL}/api/chat/sessions/${sessionId}`);
+      const session = response.data;
+      
+      // Convert backend messages to frontend format
+      const frontendMessages: MessageType[] = session.messages.map((msg: any) => ({
+        id: msg.message_id,
+        content: msg.content,
+        sender: msg.sender,
+        timestamp: new Date(msg.timestamp),
+        animation: msg.animation?.cloudinary_url
+      }));
+      
+      setCurrentSession(session);
+      setMessages(frontendMessages);
+    } catch (error) {
+      // Silently handle error
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await axios.delete(`${backendURL}/api/chat/sessions/${sessionId}`);
+      setSessions(sessions.filter(s => s.session_id !== sessionId));
+      
+      if (currentSession?.session_id === sessionId) {
+        setCurrentSession(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      // Silently handle error
+    }
+  };
 
   const handleSendMessage = async (content: string) => {
+    let sessionToUse = currentSession;
     
-    const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-    console.log(`Backend url : ${backendURL}`);
+    // Create session if it doesn't exist
+    if (!sessionToUse) {
+      try {
+        const response = await axios.post(`${backendURL}/api/chat/sessions`, {
+          title: "New Chat"
+        });
+        
+        sessionToUse = {
+          session_id: response.data.session_id,
+          title: response.data.title,
+          created_at: response.data.created_at,
+          updated_at: response.data.created_at,
+          message_count: 0,
+          messages: []
+        };
+        
+        setSessions([sessionToUse, ...sessions]);
+        setCurrentSession(sessionToUse);
+      } catch (error: any) {
+        return;
+      }
+    }
 
+    // Add user message immediately to UI
     const userMessage: MessageType = {
       id: `user-${Date.now()}`,
-      content,
+      content: content,
       sender: "user",
       timestamp: new Date(),
     };
@@ -34,14 +137,12 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      console.log(
-        "Sending request to:",
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/generate`
-      );
-
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/generate`,
-        { prompt: content },
+        `${backendURL}/api/generate`,
+        { 
+          prompt: content,
+          session_id: sessionToUse.session_id
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -49,51 +150,83 @@ const Chat = () => {
         }
       );
 
+
+
+      // Add AI response message to UI
       const aiMessage: MessageType = {
-        id: `ai-${Date.now()}`,
-        content: response.data.message,
+        id: response.data.message_id || `ai-${Date.now()}`,
+        content: "Here's your animation!",
         sender: "ai",
         timestamp: new Date(),
         animation: response.data.video_url,
-        // isLoading: true,
-        // isGeneratingVideo: true,
       };
 
       setMessages((prev) => [...prev, aiMessage]);
+
+      // If database persistence worked, reload sessions list to update counts
+      if (response.data.session_id) {
+        loadSessions();
+      }
     } catch (error) {
-      console.error("Error generating animation:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `ai-error-${Date.now()}`,
-          content: "Oops! Something went wrong. Please try again.",
-          sender: "ai",
-          timestamp: new Date(),
-        },
-      ]);
+      // Silently handle error
+      
+      // Add error message to UI
+      const errorMessage: MessageType = {
+        id: `ai-error-${Date.now()}`,
+        content: "Oops! Something went wrong. Please try again.",
+        sender: "ai",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-
-      <div className="min-h-screen mt-10 pt-10">
-        <main className="flex items-center justify-center pb-4">
-          <div className="container max-w-4xl px-4 py-8">
-            <div className="mb-10">
-              <h1 className="text-4xl font-bold mb-2 text-center">
-                ManimAI <span className="text-purple-600">Chat</span>
+    return (
+    <div className="flex flex-1 w-full pt-20 min-h-0">
+      <ChatSidebar
+        sessions={sessions}
+        currentSession={currentSession}
+        onCreateNewSession={createNewSession}
+        onLoadSession={loadSession}
+        onDeleteSession={deleteSession}
+      />
+      
+      <div className="flex flex-col flex-1">
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+            {state === "collapsed" && <SidebarTrigger className="border border-border hover:bg-accent" />}
+            <div>
+              <h1 className="text-xl font-semibold">
+                ManimAI <span className="text-blue-600">Chat</span>
               </h1>
-              <p className="text-muted-foreground text-center">
-                Describe the mathematical concept you want to animate, and our
-                AI will create a visualization for you.
+              <p className="text-sm text-muted-foreground">
+                Describe mathematical concepts to animate
               </p>
             </div>
+          </div>
+          
+          {currentSession && (
+            <div className="text-sm text-muted-foreground">
+              Current: <span className="font-medium">{currentSession.title}</span>
+            </div>
+          )}
+        </div>
 
-            <div className="space-y-4 mb-4">
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 overflow-auto p-4">
+            <div className="max-w-4xl mx-auto space-y-4">
+              {messages.length === 0 && !isLoading && (
+                <div className="text-center py-12">
+                  <h2 className="text-2xl font-bold mb-4">
+                    Welcome to ManimAI Chat
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    </p>
+                </div>
+              )}
+              
               {messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
@@ -108,10 +241,23 @@ const Chat = () => {
               )}
             </div>
           </div>
-        </main>
-      </div>
 
-      <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          <div className="border-t">
+            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Chat = () => {
+  return (
+    <div className="flex flex-col min-h-screen w-full">
+      <Navbar />
+      <SidebarProvider defaultOpen={true}>
+        <ChatContent />
+      </SidebarProvider>
     </div>
   );
 };

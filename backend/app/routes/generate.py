@@ -2,10 +2,14 @@ import cloudinary.uploader
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 import re
+import uuid
 
 from app.models.schema import PromptRequest
 from app.services.gemini import get_manim_code_from_prompt
 from app.services.manim import extract_class_name, save_code_to_file, render_manim_video
+from app.services.chat_service import ChatService
+from app.models.chat_models import AnimationModel, MessageMetadata
+from app.lib.database import is_database_connected
 
 import time
 import cloudinary
@@ -63,7 +67,35 @@ def clean_code(code):
 
 @router.post("/generate")
 async def generate_video(request: PromptRequest):
+
     try:
+        start_time = time.time()
+        
+        # Handle chat persistence if database is connected
+        session_id = request.session_id
+        user_message_id = str(uuid.uuid4())
+        ai_message_id = str(uuid.uuid4())
+        
+
+        
+        if is_database_connected():
+            try:
+                chat_service = ChatService()
+                
+                # Create session if not provided
+                if not session_id:
+                    session = await chat_service.create_session("New Animation Chat")
+                    session_id = session.session_id
+                
+                # Save user message
+                await chat_service.add_message(
+                    session_id=session_id,
+                    message_id=user_message_id,
+                    content=request.prompt,
+                    sender="user"
+                )
+            except Exception as e:
+                session_id = None
 
         enhanced_prompt = (
             f"{request.prompt}\n\n"
@@ -80,16 +112,52 @@ async def generate_video(request: PromptRequest):
         video_path = render_manim_video(script_path, class_name,file_id)
         
         documentUrl = ""
+        cloudinary_public_id = None
         file = f"videos/outputs/videos/0/480p15/Animation.mp4"
         if file:
             object_key = str(time.time()) + "/"+ file
-            upload_result = cloudinary.uploader.upload(file,public_id=object_key, resource_type = "video")
-                
+            upload_result = cloudinary.uploader.upload(file, public_id=object_key, resource_type="video")
             documentUrl = upload_result["secure_url"]
+            cloudinary_public_id = upload_result["public_id"]
         
-        print(documentUrl)
+        generation_time = time.time() - start_time
         
-        return JSONResponse({"video_url":documentUrl})
+        # Create animation and metadata objects
+        animation = AnimationModel(
+            cloudinary_url=documentUrl,
+            cloudinary_public_id=cloudinary_public_id,
+            duration=None,  # Could be extracted from video if needed
+            format="mp4"
+        )
+        
+        metadata = MessageMetadata(
+            prompt=request.prompt,
+            generation_time=generation_time,
+            manim_code=code
+        )
+        
+        # Save AI response message with animation (if database connected)
+        if is_database_connected() and session_id:
+            try:
+                await chat_service.add_message(
+                    session_id=session_id,
+                    message_id=ai_message_id,
+                    content="I've created an animation based on your request!",
+                    sender="ai",
+                    animation=animation,
+                    metadata=metadata
+                )
+            except Exception as e:
+                pass
+        
+
+        
+        return JSONResponse({
+            "video_url": documentUrl,
+            "session_id": session_id,
+            "message_id": ai_message_id,
+            "generation_time": generation_time
+        })
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
