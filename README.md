@@ -35,6 +35,10 @@ ManimAI is a web application that uses AI to generate mathematical animations us
 ## Project Architecture
 ![image](https://github.com/user-attachments/assets/8e9bc33e-ca4a-4052-ae47-231fca59d134)
 
+## Chat Interface
+<img width="1897" height="822" alt="Screenshot 2025-08-26 231927" src="https://github.com/user-attachments/assets/ea303982-289b-429a-9ea4-1ebd12fb6e46" />
+
+
 
 ## Getting Started
 
