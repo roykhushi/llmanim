@@ -17,7 +17,7 @@ export const Navbar: FC = () => {
           transition={{ duration: 0.5 }}
           className="flex items-center gap-2"
         >
-          <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-red-600 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <Link href="/"><span className="font-bold text-xl">ManimAI</span></Link>
@@ -43,7 +43,7 @@ export const Navbar: FC = () => {
           </motion.nav>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <Button asChild className="bg-blue-400 hover:bg-blue-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
+            <Button asChild className="bg-red-400 hover:bg-red-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
               <Link href="/chat">Try Now</Link>
             </Button>
           </motion.div>

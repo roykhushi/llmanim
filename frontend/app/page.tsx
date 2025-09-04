@@ -66,7 +66,7 @@ export default function LandingPage() {
         </motion.div>
 
         <motion.h1
-          className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500"
+          className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-500"
           variants={{
             hidden: { opacity: 0, y: 20 },
             visible: {
@@ -107,7 +107,7 @@ export default function LandingPage() {
             },
           }}
         >
-          <Button size="lg" asChild className="bg-blue-400 hover:bg-blue-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
+          <Button size="lg" asChild className="bg-red-400 hover:bg-red-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black">
             <Link href="/chat">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -153,7 +153,7 @@ export default function LandingPage() {
           Create Stunning Animations with{" "}
           <LineShadowText
             shadowColor="gray"
-            className="italic text-blue-600 text-4xl md:text-7xl"
+            className="italic text-red-600 text-4xl md:text-7xl"
           >
             AI
           </LineShadowText>
@@ -264,7 +264,7 @@ export default function LandingPage() {
           <Button
             size="lg"
             asChild
-            className="bg-blue-400 hover:bg-blue-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black"
+            className="bg-red-400 hover:bg-red-400 dark:bg-white dark:hover:bg-white dark:text-black dark:hover:text-black"
           >
             <Link href="/chat">
               Start Creating Now <ArrowRight className="ml-2 h-4 w-4" />
@@ -277,7 +277,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
+              <div className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
                 <Sparkles className="h-3 w-3 text-white" />
               </div>
               <span className="font-medium">ManimAI</span>
@@ -313,7 +313,7 @@ function StepCard({ number, title, description }: StepCardProps) {
       variants={fadeIn}
       className="p-6 rounded-xl bg-background shadow-sm relative"
     >
-      <div className="absolute -top-6 left-6 h-12 w-12 rounded-full flex items-center justify-center text-white dark:text-black font-bold text-xl bg-blue-400">
+      <div className="absolute -top-6 left-6 h-12 w-12 rounded-full flex items-center justify-center text-white dark:text-black font-bold text-xl bg-red-400">
         {number}
       </div>
       <div className="mt-6 ">

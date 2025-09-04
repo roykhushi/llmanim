@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Plus, History, Trash2, MessageSquare, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { Plus, History, Trash2, MessageSquare, X, Clock } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Sidebar,
   SidebarContent,
@@ -15,22 +15,22 @@ import {
   SidebarMenuButton,
   SidebarMenuAction,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 
 interface ChatSession {
-  session_id: string;
-  title: string;
-  created_at: string;
-  updated_at: string;
-  message_count: number;
+  session_id: string
+  title: string
+  created_at: string
+  updated_at: string
+  message_count: number
 }
 
 interface ChatSidebarProps {
-  sessions: ChatSession[];
-  currentSession: ChatSession | null;
-  onCreateNewSession: () => void;
-  onLoadSession: (sessionId: string) => void;
-  onDeleteSession: (sessionId: string) => void;
+  sessions: ChatSession[]
+  currentSession: ChatSession | null
+  onCreateNewSession: () => void
+  onLoadSession: (sessionId: string) => void
+  onDeleteSession: (sessionId: string) => void
 }
 
 export function ChatSidebar({
@@ -40,81 +40,84 @@ export function ChatSidebar({
   onLoadSession,
   onDeleteSession,
 }: ChatSidebarProps) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar()
+  const [hoveredSession, setHoveredSession] = useState<string | null>(null)
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+
+    if (diffInHours < 1) return "Just now"
+    if (diffInHours < 24) return `${diffInHours}h ago`
+    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`
+    return date.toLocaleDateString()
+  }
 
   return (
-    <Sidebar collapsible="offcanvas">
-      <SidebarHeader className="border-b p-4">
+    <Sidebar collapsible="offcanvas" className="border-r border-border/50">
+      <SidebarHeader className="border-b border-border/50 p-4 bg-gradient-to-r from-background to-muted/20">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-6 w-6 text-blue-600" />
-            <h2 className="text-lg font-semibold">ManimAI Chat</h2>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-600 rounded-lg blur-sm opacity-20 animate-pulse"></div>
+              <div className="relative bg-gradient-to-r from-red-500 to-purple-600 p-2 rounded-lg">
+                {/* Placeholder for logo */}
+              </div>
+            </div>
+            <h1 className="font-bold text-lg">Chat Sessions</h1>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleSidebar}
-            className="h-8 w-8 p-0"
-          >
+          <Button variant="ghost" onClick={toggleSidebar}>
             <X className="h-4 w-4" />
-            <span className="sr-only">Close sidebar</span>
           </Button>
         </div>
-        <Button
-          onClick={onCreateNewSession}
-          className="w-full mt-3"
-          size="sm"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          New Chat
-        </Button>
       </SidebarHeader>
-
       <SidebarContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={onCreateNewSession}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Session
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <History className="h-4 w-4 mr-2" />
+              History
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2">
-            <History className="h-4 w-4" />
-            Chat History
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Sessions</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {sessions.length === 0 ? (
-                <div className="p-4 text-sm text-muted-foreground text-center">
-                  No chat history yet.
-                  <br />
-                  Start a new conversation!
+            {sessions.map((session) => (
+              <div
+                key={session.session_id}
+                className={`flex items-center justify-between p-2 rounded-lg hover:bg-muted/10 cursor-pointer ${
+                  currentSession?.session_id === session.session_id ? "bg-muted/10" : ""
+                }`}
+                onMouseEnter={() => setHoveredSession(session.session_id)}
+                onMouseLeave={() => setHoveredSession(null)}
+                onClick={() => onLoadSession(session.session_id)}
+              >
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  <span className="font-medium">{session.title}</span>
                 </div>
-              ) : (
-                sessions.map((session) => (
-                  <SidebarMenuItem key={session.session_id}>
-                    <SidebarMenuButton
-                      onClick={() => onLoadSession(session.session_id)}
-                      isActive={currentSession?.session_id === session.session_id}
-                      className="w-full justify-start text-left group"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate text-sm">
-                          {session.title}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(session.updated_at).toLocaleDateString()} • {session.message_count} messages
-                        </div>
-                      </div>
-                    </SidebarMenuButton>
-                    <SidebarMenuAction
-                      onClick={() => onDeleteSession(session.session_id)}
-                      showOnHover
-                    >
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span>{formatRelativeTime(session.updated_at)}</span>
+                  {hoveredSession === session.session_id && (
+                    <SidebarMenuAction onClick={() => onDeleteSession(session.session_id)}>
                       <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete session</span>
                     </SidebarMenuAction>
-                  </SidebarMenuItem>
-                ))
-              )}
-            </SidebarMenu>
+                  )}
+                </div>
+              </div>
+            ))}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }

@@ -60,7 +60,7 @@ const ChatContent = () => {
       setCurrentSession(newSession);
       setMessages([]);
     } catch (error) {
-      // Silently handle error
+      console.log(error);
     }
   };
 
@@ -81,7 +81,7 @@ const ChatContent = () => {
       setCurrentSession(session);
       setMessages(frontendMessages);
     } catch (error) {
-      // Silently handle error
+      console.log(error)
     }
   };
 
@@ -95,7 +95,7 @@ const ChatContent = () => {
         setMessages([]);
       }
     } catch (error) {
-      // Silently handle error
+      console.log(error)
     }
   };
 
@@ -168,7 +168,7 @@ const ChatContent = () => {
         loadSessions();
       }
     } catch (error) {
-      // Silently handle error
+      console.log(error)
       
       // Add error message to UI
       const errorMessage: MessageType = {
@@ -184,7 +184,7 @@ const ChatContent = () => {
   };
 
     return (
-    <div className="flex flex-1 w-full pt-20 min-h-0">
+     <div className="flex flex-1 w-full pt-20 h-screen">
       <ChatSidebar
         sessions={sessions}
         currentSession={currentSession}
@@ -192,21 +192,13 @@ const ChatContent = () => {
         onLoadSession={loadSession}
         onDeleteSession={deleteSession}
       />
-      
-      <div className="flex flex-col flex-1">
-        <div className="flex items-center justify-between p-4 border-b">
+
+      <div className="flex flex-col flex-1 h-full">
+        <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
           <div className="flex items-center gap-3">
             {state === "collapsed" && <SidebarTrigger className="border border-border hover:bg-accent" />}
-            <div>
-              <h1 className="text-xl font-semibold">
-                ManimAI <span className="text-blue-600">Chat</span>
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Describe mathematical concepts to animate
-              </p>
-            </div>
           </div>
-          
+
           {currentSession && (
             <div className="text-sm text-muted-foreground">
               Current: <span className="font-medium">{currentSession.title}</span>
@@ -214,19 +206,16 @@ const ChatContent = () => {
           )}
         </div>
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-auto p-4">
             <div className="max-w-4xl mx-auto space-y-4">
               {messages.length === 0 && !isLoading && (
                 <div className="text-center py-12">
-                  <h2 className="text-2xl font-bold mb-4">
-                    Welcome to ManimAI Chat
-                  </h2>
-                  <p className="text-muted-foreground mb-6">
-                    </p>
+                  <h2 className="text-2xl font-bold mb-4">Welcome to ManimAI Chat ✨</h2>
+                  <p className="text-muted-foreground mb-6"></p>
                 </div>
               )}
-              
+
               {messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
@@ -234,15 +223,13 @@ const ChatContent = () => {
               {isLoading && (
                 <div className="flex items-center justify-center space-x-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <p className="text-sm text-muted-foreground">
-                    Generating animation...
-                  </p>
+                  <p className="text-sm text-muted-foreground">Generating animation...</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="border-t">
+          <div className="border-t flex-shrink-0">
             <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
           </div>
         </div>
