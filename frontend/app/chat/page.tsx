@@ -5,8 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { ChatMessage, MessageType } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatSidebar } from "@/components/ChatSidebar";
-import { Loader2, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 interface ChatSession {
@@ -27,7 +26,6 @@ const ChatContent = () => {
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 
-  // Load sessions on component mount
   useEffect(() => {
     loadSessions();
   }, []);
@@ -37,7 +35,7 @@ const ChatContent = () => {
       const response = await axios.get(`${backendURL}/api/chat/sessions`);
       setSessions(response.data.sessions);
     } catch (error: any) {
-      // Silently handle error - sessions will remain empty
+      console.log(error);
     }
   };
 
@@ -69,7 +67,6 @@ const ChatContent = () => {
       const response = await axios.get(`${backendURL}/api/chat/sessions/${sessionId}`);
       const session = response.data;
       
-      // Convert backend messages to frontend format
       const frontendMessages: MessageType[] = session.messages.map((msg: any) => ({
         id: msg.message_id,
         content: msg.content,
@@ -102,7 +99,6 @@ const ChatContent = () => {
   const handleSendMessage = async (content: string) => {
     let sessionToUse = currentSession;
     
-    // Create session if it doesn't exist
     if (!sessionToUse) {
       try {
         const response = await axios.post(`${backendURL}/api/chat/sessions`, {
@@ -124,8 +120,6 @@ const ChatContent = () => {
         return;
       }
     }
-
-    // Add user message immediately to UI
     const userMessage: MessageType = {
       id: `user-${Date.now()}`,
       content: content,
@@ -149,10 +143,6 @@ const ChatContent = () => {
           },
         }
       );
-
-
-
-      // Add AI response message to UI
       const aiMessage: MessageType = {
         id: response.data.message_id || `ai-${Date.now()}`,
         content: "Here's your animation!",
@@ -162,15 +152,11 @@ const ChatContent = () => {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-
-      // If database persistence worked, reload sessions list to update counts
       if (response.data.session_id) {
         loadSessions();
       }
     } catch (error) {
       console.log(error)
-      
-      // Add error message to UI
       const errorMessage: MessageType = {
         id: `ai-error-${Date.now()}`,
         content: "Oops! Something went wrong. Please try again.",

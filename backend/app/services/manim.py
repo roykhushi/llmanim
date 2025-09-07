@@ -1,7 +1,7 @@
 import os
-import uuid
 import subprocess
 import re
+import uuid
 
 TEMP_SCRIPT_DIR = "videos/scripts"
 VIDEO_OUTPUT_DIR = "videos/outputs"
@@ -39,20 +39,16 @@ def extract_class_name(code):
         
     raise ValueError("Could not extract class name from code.")
 
-FILE_COUNTER = 0
 def save_code_to_file(code: str) -> tuple[str, str]:
-    global FILE_COUNTER
-    
-    script_path = os.path.join(TEMP_SCRIPT_DIR, f"{FILE_COUNTER}.py")
-    file_id = f"video_{FILE_COUNTER}"
+    # unique file id
+    file_id = str(uuid.uuid4())
+    script_path = os.path.join(TEMP_SCRIPT_DIR, f"{file_id}.py")
     
     os.makedirs(TEMP_SCRIPT_DIR, exist_ok=True)
-
 
     with open(script_path, "w") as f:
         f.write(code)
     
-    FILE_COUNTER += 1
     return script_path, file_id
 
 def render_manim_video(script_path: str, class_name: str, file_id: str) -> str:

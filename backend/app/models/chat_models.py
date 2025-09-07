@@ -3,7 +3,6 @@ from typing import Optional, List, Annotated
 from datetime import datetime
 from bson import ObjectId
 
-# Simple ObjectId type for Pydantic v2
 PyObjectId = Annotated[str, Field()]
 
 def validate_object_id(v):
@@ -29,9 +28,9 @@ class MessageMetadata(BaseModel):
 class MessageModel(BaseModel):
     id: Optional[str] = Field(default_factory=lambda: str(ObjectId()), alias="_id")
     session_id: str
-    message_id: str  # Frontend message ID
+    message_id: str  
     content: str
-    sender: str  # "user" or "ai"
+    sender: str  
     timestamp: datetime
     animation: Optional[AnimationModel] = None
     metadata: Optional[MessageMetadata] = None
@@ -44,14 +43,14 @@ class MessageModel(BaseModel):
         return validate_object_id(v)
 
     class Config:
-        populate_by_name = True  # Updated for Pydantic v2
+        populate_by_name = True 
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
 class ChatSessionModel(BaseModel):
     id: Optional[str] = Field(default_factory=lambda: str(ObjectId()), alias="_id")
     session_id: str
-    user_id: Optional[str] = None  # For future user authentication
+    user_id: Optional[str] = None  
     title: str
     created_at: datetime
     updated_at: datetime
@@ -65,11 +64,11 @@ class ChatSessionModel(BaseModel):
         return validate_object_id(v)
 
     class Config:
-        populate_by_name = True  # Updated for Pydantic v2
+        populate_by_name = True  
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
-# Request/Response Models
+
 class CreateSessionRequest(BaseModel):
     title: Optional[str] = None
 

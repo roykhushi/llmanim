@@ -22,7 +22,6 @@ class ChatService:
         session_id = str(uuid.uuid4())
         now = datetime.utcnow()
         
-        # Generate title from first message if not provided
         if not title:
             title = f"Chat Session {now.strftime('%Y-%m-%d %H:%M')}"
         
@@ -33,10 +32,7 @@ class ChatService:
             updated_at=now,
             message_count=0
         )
-        
-        # Insert into database
         session_dict = session.dict(by_alias=True)
-        # Ensure _id is not None
         if session_dict.get('_id') is None:
             session_dict['_id'] = str(ObjectId())
         await self.sessions_collection.insert_one(session_dict)
@@ -44,14 +40,14 @@ class ChatService:
         return session
 
     async def get_session(self, session_id: str) -> Optional[ChatSessionModel]:
-        """Get a chat session by ID."""
+   
         session_dict = await self.sessions_collection.find_one({"session_id": session_id})
         if session_dict:
             return ChatSessionModel(**session_dict)
         return None
 
     async def get_all_sessions(self) -> List[ChatSessionModel]:
-        """Get all chat sessions."""
+    
         sessions = []
         cursor = self.sessions_collection.find().sort("updated_at", -1)
         async for session_dict in cursor:
@@ -67,7 +63,7 @@ class ChatService:
         animation: Optional[AnimationModel] = None,
         metadata: Optional[MessageMetadata] = None
     ) -> MessageModel:
-        """Add a message to a session."""
+       
         message = MessageModel(
             session_id=session_id,
             message_id=message_id,
@@ -109,7 +105,7 @@ class ChatService:
         return message
 
     async def get_session_messages(self, session_id: str) -> List[MessageModel]:
-        """Get all messages for a session."""
+     
         messages = []
         cursor = self.messages_collection.find({"session_id": session_id}).sort("timestamp", 1)
         async for message_dict in cursor:
@@ -117,7 +113,7 @@ class ChatService:
         return messages
 
     async def delete_session(self, session_id: str) -> bool:
-        """Delete a session and all its messages."""
+    
         # Delete messages first
         await self.messages_collection.delete_many({"session_id": session_id})
         
@@ -126,7 +122,7 @@ class ChatService:
         return result.deleted_count > 0
 
     async def update_session_title(self, session_id: str, title: str) -> bool:
-        """Update session title."""
+    
         result = await self.sessions_collection.update_one(
             {"session_id": session_id},
             {"$set": {"title": title, "updated_at": datetime.utcnow()}}

@@ -1,6 +1,6 @@
 import cloudinary.uploader
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 import re
 import uuid
 
@@ -70,8 +70,6 @@ async def generate_video(request: PromptRequest):
 
     try:
         start_time = time.time()
-        
-        # Handle chat persistence if database is connected
         session_id = request.session_id
         user_message_id = str(uuid.uuid4())
         ai_message_id = str(uuid.uuid4())
@@ -81,13 +79,10 @@ async def generate_video(request: PromptRequest):
         if is_database_connected():
             try:
                 chat_service = ChatService()
-                
-                # Create session if not provided
                 if not session_id:
                     session = await chat_service.create_session("New Animation Chat")
                     session_id = session.session_id
                 
-                # Save user message
                 await chat_service.add_message(
                     session_id=session_id,
                     message_id=user_message_id,
@@ -122,11 +117,10 @@ async def generate_video(request: PromptRequest):
         
         generation_time = time.time() - start_time
         
-        # Create animation and metadata objects
         animation = AnimationModel(
             cloudinary_url=documentUrl,
             cloudinary_public_id=cloudinary_public_id,
-            duration=None,  # Could be extracted from video if needed
+            duration=None, 
             format="mp4"
         )
         
@@ -136,7 +130,6 @@ async def generate_video(request: PromptRequest):
             manim_code=code
         )
         
-        # Save AI response message with animation (if database connected)
         if is_database_connected() and session_id:
             try:
                 await chat_service.add_message(

@@ -14,7 +14,6 @@ router = APIRouter()
 
 @router.post("/sessions", response_model=CreateSessionResponse)
 async def create_session(request: CreateSessionRequest):
-    """Create a new chat session."""
 
     try:
         chat_service = ChatService()
@@ -30,7 +29,6 @@ async def create_session(request: CreateSessionRequest):
 
 @router.get("/sessions", response_model=SessionListResponse)
 async def get_all_sessions():
-    """Get all chat sessions."""
     try:
         chat_service = ChatService()
         sessions = await chat_service.get_all_sessions()
@@ -43,7 +41,7 @@ async def get_all_sessions():
                 created_at=session.created_at,
                 updated_at=session.updated_at,
                 message_count=session.message_count,
-                messages=[]  # Don't include messages in list view
+                messages=[]  
             ))
         
         return SessionListResponse(sessions=session_responses)
@@ -119,8 +117,6 @@ async def cleanup_database():
     """Clean up problematic null _id entries."""
     try:
         chat_service = ChatService()
-        
-        # Remove documents with null _id
         sessions_deleted = await chat_service.sessions_collection.delete_many({"_id": None})
         messages_deleted = await chat_service.messages_collection.delete_many({"_id": None})
         
@@ -131,46 +127,3 @@ async def cleanup_database():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/test-db")
-async def test_database():
-    """Test database connection and operations."""
-    try:
-        from app.lib.database import is_database_connected
-        
-        if not is_database_connected():
-            return {"status": "error", "message": "Database not connected"}
-        
-        chat_service = ChatService()
-        
-        # Test creating a simple session
-        test_session = await chat_service.create_session("Test Session")
-        
-        # Test adding a message
-        await chat_service.add_message(
-            session_id=test_session.session_id,
-            message_id="test-msg-1",
-            content="Test message",
-            sender="user"
-        )
-        
-        # Test retrieving the session
-        retrieved_session = await chat_service.get_session(test_session.session_id)
-        messages = await chat_service.get_session_messages(test_session.session_id)
-        
-        # Clean up test data
-        await chat_service.delete_session(test_session.session_id)
-        
-        return {
-            "status": "success",
-            "message": "Database operations working correctly",
-            "test_session_id": test_session.session_id,
-            "messages_count": len(messages)
-        }
-    except Exception as e:
-        import traceback
-        return {
-            "status": "error", 
-            "message": str(e),
-            "traceback": traceback.format_exc()
-        } 

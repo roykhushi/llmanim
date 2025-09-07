@@ -7,31 +7,26 @@ import os
 
 app = FastAPI(title="LLManim API", version="1.0.0")
 
-# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins during development
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount the videos directory to serve static files
 videos_path = os.path.join(os.path.dirname(__file__), "videos")
 if os.path.exists(videos_path):
     app.mount("/videos", StaticFiles(directory=videos_path), name="videos")
 
-# Include routers
 app.include_router(generate.router, prefix="/api", tags=["generate"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 
 @app.on_event("startup")
 async def startup_event():
-    """Connect to MongoDB on startup."""
     try:
         await connect_to_mongo()
     except Exception as e:
-        # Chat features will be disabled, but video generation will work
         pass
 
 @app.on_event("shutdown")
