@@ -28,10 +28,10 @@ async def close_mongo_connection():
         async_client.close()
     pass
 
-# def get_database():
-#     if not async_client:
-#         raise Exception("Database not connected. Call connect_to_mongo() first.")
-#     return async_client[DATABASE_NAME]
+def get_database():
+    if not async_client:
+        raise Exception("Database not connected. Call connect_to_mongo() first.")
+    return async_client[DATABASE_NAME]
 
-# def is_database_connected():
-#     return async_client is not None
+def is_database_connected():
+    return async_client is not None
