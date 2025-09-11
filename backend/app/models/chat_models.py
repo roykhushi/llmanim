@@ -1,18 +1,30 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List, Annotated
+from typing import Optional, List
 from datetime import datetime
 from bson import ObjectId
 
-PyObjectId = Annotated[str, Field()]
-
 def validate_object_id(v):
+    if v is None or v == "":
+        return str(ObjectId())
     if isinstance(v, ObjectId):
         return str(v)
-    if isinstance(v, str):
-        if ObjectId.is_valid(v):
-            return v
-        raise ValueError("Invalid ObjectId")
-    raise ValueError("Invalid ObjectId type")
+    if isinstance(v, str) and ObjectId.is_valid(v):
+        return v
+    raise ValueError("Invalid ObjectId")
+
+class BaseMongoModel(BaseModel):
+    # base model for MongoDB documents with ObjectId handling
+    id: Optional[str] = Field(default_factory=lambda: str(ObjectId()), alias="_id")
+
+    @field_validator('id', mode='before')
+    @classmethod
+    def validate_id(cls, v):
+        return validate_object_id(v)
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
 
 class AnimationModel(BaseModel):
     cloudinary_url: str
@@ -25,8 +37,7 @@ class MessageMetadata(BaseModel):
     generation_time: Optional[float] = None
     manim_code: Optional[str] = None
 
-class MessageModel(BaseModel):
-    id: Optional[str] = Field(default_factory=lambda: str(ObjectId()), alias="_id")
+class MessageModel(BaseMongoModel):
     session_id: str
     message_id: str  
     content: str
@@ -35,38 +46,13 @@ class MessageModel(BaseModel):
     animation: Optional[AnimationModel] = None
     metadata: Optional[MessageMetadata] = None
 
-    @field_validator('id', mode='before')
-    @classmethod
-    def validate_id(cls, v):
-        if v is None or v == "":
-            return str(ObjectId())
-        return validate_object_id(v)
-
-    class Config:
-        populate_by_name = True 
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-class ChatSessionModel(BaseModel):
-    id: Optional[str] = Field(default_factory=lambda: str(ObjectId()), alias="_id")
+class ChatSessionModel(BaseMongoModel):
     session_id: str
     user_id: Optional[str] = None  
     title: str
     created_at: datetime
     updated_at: datetime
     message_count: int = 0
-
-    @field_validator('id', mode='before')
-    @classmethod
-    def validate_id(cls, v):
-        if v is None or v == "":
-            return str(ObjectId())
-        return validate_object_id(v)
-
-    class Config:
-        populate_by_name = True  
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
 
 
 class CreateSessionRequest(BaseModel):
@@ -97,4 +83,4 @@ class ChatSessionResponse(BaseModel):
     messages: List[MessageResponse] = []
 
 class SessionListResponse(BaseModel):
-    sessions: List[ChatSessionResponse] 
+    sessions: List[ChatSessionResponse]

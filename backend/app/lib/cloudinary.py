@@ -10,4 +10,4 @@ cloudinary.config(
     api_secret=os.environ.get("CLOUDINARY_API_SECRET")
 )
 
-cloudinary = cloudinary
+# cloudinary = cloudinary
